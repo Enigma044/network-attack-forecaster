@@ -1,0 +1,265 @@
+{
+  "data_kind": "synthetic",
+  "evaluated_on": "held-out test split",
+  "k": 10,
+  "targets": {
+    "any": {
+      "world_model": {
+        "precision": 0.974,
+        "recall": 0.8947,
+        "f1": 0.9327,
+        "false_positive_rate": 0.0215,
+        "average_precision": 0.9487,
+        "threshold": 0.612,
+        "tp": 187,
+        "fp": 5,
+        "tn": 228,
+        "fn": 22,
+        "n": 442,
+        "positives": 209
+      },
+      "logistic_regression": {
+        "precision": 0.9877,
+        "recall": 0.7656,
+        "f1": 0.8625,
+        "false_positive_rate": 0.0086,
+        "average_precision": 0.9468,
+        "threshold": 0.9512,
+        "tp": 160,
+        "fp": 2,
+        "tn": 231,
+        "fn": 49,
+        "n": 442,
+        "positives": 209
+      },
+      "persistence_reference": {
+        "precision": 0.9892,
+        "recall": 0.8756,
+        "f1": 0.9289,
+        "false_positive_rate": 0.0086,
+        "average_precision": 0.925,
+        "threshold": 0.5,
+        "tp": 183,
+        "fp": 2,
+        "tn": 231,
+        "fn": 26,
+        "n": 442,
+        "positives": 209
+      }
+    },
+    "step_1": {
+      "world_model": {
+        "precision": 0.9719,
+        "recall": 0.9351,
+        "f1": 0.9532,
+        "false_positive_rate": 0.0195,
+        "average_precision": 0.986,
+        "threshold": 0.7722,
+        "tp": 173,
+        "fp": 5,
+        "tn": 252,
+        "fn": 12,
+        "n": 442,
+        "positives": 185
+      },
+      "logistic_regression": {
+        "precision": 0.9805,
+        "recall": 0.8162,
+        "f1": 0.8909,
+        "false_positive_rate": 0.0117,
+        "average_precision": 0.9656,
+        "threshold": 0.9478,
+        "tp": 151,
+        "fp": 3,
+        "tn": 254,
+        "fn": 34,
+        "n": 442,
+        "positives": 185
+      },
+      "persistence_reference": {
+        "precision": 0.9784,
+        "recall": 0.9784,
+        "f1": 0.9784,
+        "false_positive_rate": 0.0156,
+        "average_precision": 0.9663,
+        "threshold": 0.5,
+        "tp": 181,
+        "fp": 4,
+        "tn": 253,
+        "fn": 4,
+        "n": 442,
+        "positives": 185
+      }
+    },
+    "step_5": {
+      "world_model": {
+        "precision": 0.911,
+        "recall": 0.9405,
+        "f1": 0.9255,
+        "false_positive_rate": 0.0661,
+        "average_precision": 0.9017,
+        "threshold": 0.4451,
+        "tp": 174,
+        "fp": 17,
+        "tn": 240,
+        "fn": 11,
+        "n": 442,
+        "positives": 185
+      },
+      "logistic_regression": {
+        "precision": 0.8645,
+        "recall": 0.7243,
+        "f1": 0.7882,
+        "false_positive_rate": 0.0817,
+        "average_precision": 0.8708,
+        "threshold": 0.653,
+        "tp": 134,
+        "fp": 21,
+        "tn": 236,
+        "fn": 51,
+        "n": 442,
+        "positives": 185
+      },
+      "persistence_reference": {
+        "precision": 0.9189,
+        "recall": 0.9189,
+        "f1": 0.9189,
+        "false_positive_rate": 0.0584,
+        "average_precision": 0.8783,
+        "threshold": 0.5,
+        "tp": 170,
+        "fp": 15,
+        "tn": 242,
+        "fn": 15,
+        "n": 442,
+        "positives": 185
+      }
+    },
+    "step_10": {
+      "world_model": {
+        "precision": 0.8701,
+        "recall": 0.8324,
+        "f1": 0.8508,
+        "false_positive_rate": 0.0895,
+        "average_precision": 0.7375,
+        "threshold": 0.6533,
+        "tp": 154,
+        "fp": 23,
+        "tn": 234,
+        "fn": 31,
+        "n": 442,
+        "positives": 185
+      },
+      "logistic_regression": {
+        "precision": 0.771,
+        "recall": 0.5459,
+        "f1": 0.6392,
+        "false_positive_rate": 0.1167,
+        "average_precision": 0.7697,
+        "threshold": 0.724,
+        "tp": 101,
+        "fp": 30,
+        "tn": 227,
+        "fn": 84,
+        "n": 442,
+        "positives": 185
+      },
+      "persistence_reference": {
+        "precision": 0.8811,
+        "recall": 0.8811,
+        "f1": 0.8811,
+        "false_positive_rate": 0.0856,
+        "average_precision": 0.8261,
+        "threshold": 0.5,
+        "tp": 163,
+        "fp": 22,
+        "tn": 235,
+        "fn": 22,
+        "n": 442,
+        "positives": 185
+      }
+    }
+  },
+  "onset": {
+    "any": {
+      "world_model": {
+        "precision": 0.6667,
+        "recall": 0.2308,
+        "f1": 0.3429,
+        "false_positive_rate": 0.013,
+        "average_precision": 0.2099,
+        "threshold": 0.612,
+        "tp": 6,
+        "fp": 3,
+        "tn": 228,
+        "fn": 20,
+        "n": 257,
+        "positives": 26
+      },
+      "logistic_regression": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "false_positive_rate": 0.0043,
+        "average_precision": 0.1788,
+        "threshold": 0.9512,
+        "tp": 0,
+        "fp": 1,
+        "tn": 230,
+        "fn": 26,
+        "n": 257,
+        "positives": 26
+      }
+    }
+  },
+  "stage_head": {
+    "n": 1770,
+    "accuracy": 0.6571,
+    "true_stage_counts": {
+      "Reconnaissance": 180,
+      "Initial Access": 780,
+      "Lateral Movement": 210,
+      "Command and Control": 600
+    },
+    "stages_unseen_in_training": [],
+    "note": "Future windows that are attack windows with a mapped stage (all K steps)."
+  },
+  "split": {
+    "method": "by-capture",
+    "train": [
+      "synthetic_2026-01-06:2026-01-06",
+      "synthetic_2026-01-07:2026-01-07",
+      "synthetic_2026-01-08:2026-01-08",
+      "synthetic_2026-01-09:2026-01-09",
+      "synthetic_2026-01-13:2026-01-13",
+      "synthetic_2026-01-14:2026-01-14"
+    ],
+    "val": [
+      "synthetic_2026-01-05:2026-01-05",
+      "synthetic_2026-01-12:2026-01-12"
+    ],
+    "test": [
+      "synthetic_2026-01-10:2026-01-10",
+      "synthetic_2026-01-11:2026-01-11"
+    ],
+    "test_hours": [],
+    "note": "random capture split, seed=42"
+  },
+  "sequence_counts": {
+    "train": {
+      "n": 1326,
+      "with_attack_within_k": 710
+    },
+    "val": {
+      "n": 442,
+      "with_attack_within_k": 173
+    },
+    "test": {
+      "n": 442,
+      "with_attack_within_k": 209
+    }
+  },
+  "state_model": {
+    "val_state_nll": -0.16795584559440613
+  }
+}

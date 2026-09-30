@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+# datasets stay local (download commands are in the README); trained models are small and committed
+data/
+artifacts/*/eval_metrics.*
+forecasts*.csv
+frontend/node_modules/
+frontend/dist/
+*.tsbuildinfo

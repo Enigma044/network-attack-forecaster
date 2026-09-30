@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+/* Colour tokens. Utilities (bg-surface, text-ink, border-line, …) read CSS variables so the
+   whole UI switches theme by changing data-theme on <html>. Chart colours are validated per
+   mode: dark #3987e5/#d95926 on #1a1a19, light #2a78d6/#eb6834 on #fcfcfb. */
+@theme inline {
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-grid: var(--grid);
+  --color-axis: var(--axis);
+  --color-lstm: var(--lstm);
+  --color-base: var(--base);
+  --color-raise: var(--raise);
+  --color-lower: var(--lower);
+  --color-critical: var(--critical);
+  --color-warning: var(--warning);
+  --color-good: var(--good);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-wash: var(--wash);
+  --color-wash-strong: var(--wash-strong);
+  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d0d0d;
+  --surface: #1a1a19;
+  --surface-2: #222220;
+  --ink: #ffffff;
+  --ink-2: #c3c2b7;
+  --muted: #898781;
+  --grid: #2c2c2a;
+  --axis: #383835;
+  --lstm: #3987e5;
+  --base: #d95926;
+  --raise: #e66767;
+  --lower: #3987e5;
+  --critical: #d03b3b;
+  --warning: #fab219;
+  --good: #0ca30c;
+  --line: rgba(255, 255, 255, 0.1);
+  --line-strong: rgba(255, 255, 255, 0.2);
+  --wash: rgba(255, 255, 255, 0.05);
+  --wash-strong: rgba(255, 255, 255, 0.1);
+  --card-shadow: none;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  /* light beige page, white cards; text and hairlines warmed to match */
+  --page: #f8f4ec;
+  --surface: #ffffff;
+  --surface-2: #f8f4ec;
+  --ink: #1c1814;
+  --ink-2: #554d44;
+  --muted: #71685c;
+  --grid: #ebe3d4;
+  --axis: #d3c8b4;
+  --lstm: #2a78d6;
+  --base: #eb6834;
+  --raise: #e34948;
+  --lower: #2a78d6;
+  --critical: #c62f2f;
+  --warning: #946200;
+  --good: #1f7a1f;
+  --line: rgba(92, 70, 38, 0.14);
+  --line-strong: rgba(92, 70, 38, 0.26);
+  --wash: rgba(92, 70, 38, 0.05);
+  --wash-strong: rgba(92, 70, 38, 0.1);
+  --card-shadow: 0 1px 2px rgba(92, 70, 38, 0.05), 0 6px 20px rgba(92, 70, 38, 0.06);
+}
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(300%);
+  }
+}
+
+.card-shadow {
+  box-shadow: var(--card-shadow);
+}

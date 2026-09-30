@@ -1,0 +1,492 @@
+{
+  "data_kind": "external",
+  "evaluated_on": "held-out test split",
+  "k": 10,
+  "targets": {
+    "any": {
+      "world_model": {
+        "precision": 0.0769,
+        "recall": 0.0116,
+        "f1": 0.0201,
+        "false_positive_rate": 0.0262,
+        "average_precision": 0.2868,
+        "threshold": 0.7963,
+        "tp": 2,
+        "fp": 24,
+        "tn": 891,
+        "fn": 171,
+        "n": 1088,
+        "positives": 173
+      },
+      "logistic_regression": {
+        "precision": 1.0,
+        "recall": 0.0925,
+        "f1": 0.1693,
+        "false_positive_rate": 0.0,
+        "average_precision": 0.3611,
+        "threshold": 0.9599,
+        "tp": 16,
+        "fp": 0,
+        "tn": 915,
+        "fn": 157,
+        "n": 1088,
+        "positives": 173
+      },
+      "persistence_reference": {
+        "precision": 0.9871,
+        "recall": 0.8844,
+        "f1": 0.9329,
+        "false_positive_rate": 0.0022,
+        "average_precision": 0.8914,
+        "threshold": 0.5,
+        "tp": 153,
+        "fp": 2,
+        "tn": 913,
+        "fn": 20,
+        "n": 1088,
+        "positives": 173
+      }
+    },
+    "step_1": {
+      "world_model": {
+        "precision": 0.1304,
+        "recall": 0.0194,
+        "f1": 0.0337,
+        "false_positive_rate": 0.0214,
+        "average_precision": 0.2548,
+        "threshold": 0.6798,
+        "tp": 3,
+        "fp": 20,
+        "tn": 913,
+        "fn": 152,
+        "n": 1088,
+        "positives": 155
+      },
+      "logistic_regression": {
+        "precision": 0.875,
+        "recall": 0.0452,
+        "f1": 0.0859,
+        "false_positive_rate": 0.0011,
+        "average_precision": 0.3916,
+        "threshold": 0.9656,
+        "tp": 7,
+        "fp": 1,
+        "tn": 932,
+        "fn": 148,
+        "n": 1088,
+        "positives": 155
+      },
+      "persistence_reference": {
+        "precision": 0.9871,
+        "recall": 0.9871,
+        "f1": 0.9871,
+        "false_positive_rate": 0.0021,
+        "average_precision": 0.9762,
+        "threshold": 0.5,
+        "tp": 153,
+        "fp": 2,
+        "tn": 931,
+        "fn": 2,
+        "n": 1088,
+        "positives": 155
+      }
+    },
+    "step_5": {
+      "world_model": {
+        "precision": 0.037,
+        "recall": 0.0065,
+        "f1": 0.011,
+        "false_positive_rate": 0.0279,
+        "average_precision": 0.2855,
+        "threshold": 0.7515,
+        "tp": 1,
+        "fp": 26,
+        "tn": 907,
+        "fn": 154,
+        "n": 1088,
+        "positives": 155
+      },
+      "logistic_regression": {
+        "precision": 0.6364,
+        "recall": 0.0452,
+        "f1": 0.0843,
+        "false_positive_rate": 0.0043,
+        "average_precision": 0.2467,
+        "threshold": 0.528,
+        "tp": 7,
+        "fp": 4,
+        "tn": 929,
+        "fn": 148,
+        "n": 1088,
+        "positives": 155
+      },
+      "persistence_reference": {
+        "precision": 0.9355,
+        "recall": 0.9355,
+        "f1": 0.9355,
+        "false_positive_rate": 0.0107,
+        "average_precision": 0.8843,
+        "threshold": 0.5,
+        "tp": 145,
+        "fp": 10,
+        "tn": 923,
+        "fn": 10,
+        "n": 1088,
+        "positives": 155
+      }
+    },
+    "step_10": {
+      "world_model": {
+        "precision": 0.037,
+        "recall": 0.0065,
+        "f1": 0.011,
+        "false_positive_rate": 0.0279,
+        "average_precision": 0.3011,
+        "threshold": 0.7909,
+        "tp": 1,
+        "fp": 26,
+        "tn": 907,
+        "fn": 154,
+        "n": 1088,
+        "positives": 155
+      },
+      "logistic_regression": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "false_positive_rate": 0.0054,
+        "average_precision": 0.1395,
+        "threshold": 0.7421,
+        "tp": 0,
+        "fp": 5,
+        "tn": 928,
+        "fn": 155,
+        "n": 1088,
+        "positives": 155
+      },
+      "persistence_reference": {
+        "precision": 0.871,
+        "recall": 0.871,
+        "f1": 0.871,
+        "false_positive_rate": 0.0214,
+        "average_precision": 0.777,
+        "threshold": 0.5,
+        "tp": 135,
+        "fp": 20,
+        "tn": 913,
+        "fn": 20,
+        "n": 1088,
+        "positives": 155
+      }
+    }
+  },
+  "onset": {
+    "any": {
+      "world_model": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "false_positive_rate": 0.0263,
+        "average_precision": 0.0583,
+        "threshold": 0.7963,
+        "tp": 0,
+        "fp": 24,
+        "tn": 889,
+        "fn": 20,
+        "n": 933,
+        "positives": 20
+      },
+      "logistic_regression": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "false_positive_rate": 0.0,
+        "average_precision": 0.0199,
+        "threshold": 0.9599,
+        "tp": 0,
+        "fp": 0,
+        "tn": 913,
+        "fn": 20,
+        "n": 933,
+        "positives": 20
+      }
+    }
+  },
+  "stage_head": {
+    "n": 1550,
+    "accuracy": 0.2374,
+    "true_stage_counts": {
+      "Lateral Movement": 1550
+    },
+    "stages_unseen_in_training": [],
+    "note": "Future windows that are attack windows with a mapped stage (all K steps)."
+  },
+  "test_hours": {
+    "evaluated_on": "unseen hours (held-out time blocks) of the training days",
+    "n": 468,
+    "targets": {
+      "any": {
+        "world_model": {
+          "precision": 0.4615,
+          "recall": 0.2182,
+          "f1": 0.2963,
+          "false_positive_rate": 0.0339,
+          "average_precision": 0.3009,
+          "threshold": 0.7963,
+          "tp": 12,
+          "fp": 14,
+          "tn": 399,
+          "fn": 43,
+          "n": 468,
+          "positives": 55
+        },
+        "logistic_regression": {
+          "precision": 0.9333,
+          "recall": 0.2545,
+          "f1": 0.4,
+          "false_positive_rate": 0.0024,
+          "average_precision": 0.4724,
+          "threshold": 0.9599,
+          "tp": 14,
+          "fp": 1,
+          "tn": 412,
+          "fn": 41,
+          "n": 468,
+          "positives": 55
+        },
+        "persistence_reference": {
+          "precision": 1.0,
+          "recall": 0.5636,
+          "f1": 0.7209,
+          "false_positive_rate": 0.0,
+          "average_precision": 0.6149,
+          "threshold": 0.5,
+          "tp": 31,
+          "fp": 0,
+          "tn": 413,
+          "fn": 24,
+          "n": 468,
+          "positives": 55
+        }
+      },
+      "step_1": {
+        "world_model": {
+          "precision": 0.5909,
+          "recall": 0.3939,
+          "f1": 0.4727,
+          "false_positive_rate": 0.0207,
+          "average_precision": 0.6716,
+          "threshold": 0.6798,
+          "tp": 13,
+          "fp": 9,
+          "tn": 426,
+          "fn": 20,
+          "n": 468,
+          "positives": 33
+        },
+        "logistic_regression": {
+          "precision": 1.0,
+          "recall": 0.3333,
+          "f1": 0.5,
+          "false_positive_rate": 0.0,
+          "average_precision": 0.795,
+          "threshold": 0.9656,
+          "tp": 11,
+          "fp": 0,
+          "tn": 435,
+          "fn": 22,
+          "n": 468,
+          "positives": 33
+        },
+        "persistence_reference": {
+          "precision": 1.0,
+          "recall": 0.9394,
+          "f1": 0.9688,
+          "false_positive_rate": 0.0,
+          "average_precision": 0.9437,
+          "threshold": 0.5,
+          "tp": 31,
+          "fp": 0,
+          "tn": 435,
+          "fn": 2,
+          "n": 468,
+          "positives": 33
+        }
+      },
+      "step_5": {
+        "world_model": {
+          "precision": 0.52,
+          "recall": 0.3171,
+          "f1": 0.3939,
+          "false_positive_rate": 0.0281,
+          "average_precision": 0.3513,
+          "threshold": 0.7515,
+          "tp": 13,
+          "fp": 12,
+          "tn": 415,
+          "fn": 28,
+          "n": 468,
+          "positives": 41
+        },
+        "logistic_regression": {
+          "precision": 0.9231,
+          "recall": 0.2927,
+          "f1": 0.4444,
+          "false_positive_rate": 0.0023,
+          "average_precision": 0.4588,
+          "threshold": 0.528,
+          "tp": 12,
+          "fp": 1,
+          "tn": 426,
+          "fn": 29,
+          "n": 468,
+          "positives": 41
+        },
+        "persistence_reference": {
+          "precision": 1.0,
+          "recall": 0.7561,
+          "f1": 0.8611,
+          "false_positive_rate": 0.0,
+          "average_precision": 0.7775,
+          "threshold": 0.5,
+          "tp": 31,
+          "fp": 0,
+          "tn": 427,
+          "fn": 10,
+          "n": 468,
+          "positives": 41
+        }
+      },
+      "step_10": {
+        "world_model": {
+          "precision": 0.4815,
+          "recall": 0.2364,
+          "f1": 0.3171,
+          "false_positive_rate": 0.0339,
+          "average_precision": 0.2964,
+          "threshold": 0.7909,
+          "tp": 13,
+          "fp": 14,
+          "tn": 399,
+          "fn": 42,
+          "n": 468,
+          "positives": 55
+        },
+        "logistic_regression": {
+          "precision": 0.8333,
+          "recall": 0.1818,
+          "f1": 0.2985,
+          "false_positive_rate": 0.0048,
+          "average_precision": 0.3122,
+          "threshold": 0.7421,
+          "tp": 10,
+          "fp": 2,
+          "tn": 411,
+          "fn": 45,
+          "n": 468,
+          "positives": 55
+        },
+        "persistence_reference": {
+          "precision": 1.0,
+          "recall": 0.5636,
+          "f1": 0.7209,
+          "false_positive_rate": 0.0,
+          "average_precision": 0.6149,
+          "threshold": 0.5,
+          "tp": 31,
+          "fp": 0,
+          "tn": 413,
+          "fn": 24,
+          "n": 468,
+          "positives": 55
+        }
+      }
+    },
+    "onset": {
+      "any": {
+        "world_model": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "false_positive_rate": 0.0339,
+          "average_precision": 0.0388,
+          "threshold": 0.7963,
+          "tp": 0,
+          "fp": 14,
+          "tn": 399,
+          "fn": 24,
+          "n": 437,
+          "positives": 24
+        },
+        "logistic_regression": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "false_positive_rate": 0.0024,
+          "average_precision": 0.0362,
+          "threshold": 0.9599,
+          "tp": 0,
+          "fp": 1,
+          "tn": 412,
+          "fn": 24,
+          "n": 437,
+          "positives": 24
+        }
+      }
+    }
+  },
+  "split": {
+    "method": "by-capture+blocked-val",
+    "train": [
+      "Friday-02-03-2018_TrafficForML_CICFlowMeter:2018-03-02",
+      "Friday-16-02-2018_TrafficForML_CICFlowMeter:2018-02-16",
+      "Thursday-15-02-2018_TrafficForML_CICFlowMeter:2018-02-15",
+      "Thursday-22-02-2018_TrafficForML_CICFlowMeter:2018-02-22",
+      "Wednesday-14-02-2018_TrafficForML_CICFlowMeter:2018-02-14",
+      "Wednesday-21-02-2018_TrafficForML_CICFlowMeter:2018-02-21",
+      "Wednesday-28-02-2018_TrafficForML_CICFlowMeter:2018-02-28"
+    ],
+    "val": [
+      "Thursday-15-02-2018_TrafficForML_CICFlowMeter:2018-02-15#block0",
+      "Wednesday-14-02-2018_TrafficForML_CICFlowMeter:2018-02-14#block0",
+      "Wednesday-14-02-2018_TrafficForML_CICFlowMeter:2018-02-14#block1",
+      "Wednesday-21-02-2018_TrafficForML_CICFlowMeter:2018-02-21#block2",
+      "Wednesday-28-02-2018_TrafficForML_CICFlowMeter:2018-02-28#block0",
+      "Wednesday-28-02-2018_TrafficForML_CICFlowMeter:2018-02-28#block2",
+      "Wednesday-28-02-2018_TrafficForML_CICFlowMeter:2018-02-28#block4"
+    ],
+    "test": [
+      "Friday-23-02-2018_TrafficForML_CICFlowMeter:2018-02-23",
+      "Thursday-01-03-2018_TrafficForML_CICFlowMeter:2018-03-01"
+    ],
+    "test_hours": [
+      "Friday-16-02-2018_TrafficForML_CICFlowMeter:2018-02-16#block2",
+      "Thursday-22-02-2018_TrafficForML_CICFlowMeter:2018-02-22#block0",
+      "Thursday-22-02-2018_TrafficForML_CICFlowMeter:2018-02-22#block1",
+      "Wednesday-14-02-2018_TrafficForML_CICFlowMeter:2018-02-14#block2",
+      "Wednesday-21-02-2018_TrafficForML_CICFlowMeter:2018-02-21#block0"
+    ],
+    "note": "explicit capture lists; validation = 7 and test_hours = 5 blocks of 120 windows drawn (stratified by attack presence, seed=42) from the training captures; blocks never share a sequence; test captures are entire unseen days"
+  },
+  "sequence_counts": {
+    "train": {
+      "n": 1708,
+      "with_attack_within_k": 531
+    },
+    "val": {
+      "n": 677,
+      "with_attack_within_k": 193
+    },
+    "test": {
+      "n": 1088,
+      "with_attack_within_k": 173
+    },
+    "test_hours": {
+      "n": 468,
+      "with_attack_within_k": 55
+    }
+  },
+  "state_model": {
+    "val_state_nll": -0.04591109976172447
+  }
+}

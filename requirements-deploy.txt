@@ -1,0 +1,11 @@
+# Exact versions the shipped models were trained and tested with (joblib pickles need the same scikit-learn).
+# torch is installed separately from the CPU wheel index, see Dockerfile.
+pandas==3.0.6
+numpy==2.5.3
+scikit-learn==1.9.1
+scipy==1.18.1
+joblib==1.6.0
+fastapi==0.141.1
+starlette==1.7.0
+uvicorn==0.54.0
+python-multipart==0.0.32

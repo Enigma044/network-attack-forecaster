@@ -1,0 +1,16 @@
+# keep the build context small: no environments, caches, logs or bulk data
+.venv/
+**/node_modules/
+**/__pycache__/
+.pytest_cache/
+.git/
+.streamlit/
+frontend/dist/
+tests/
+*.log
+data/*.log
+forecasts*.csv
+# ship only the held-out real day used by the demo (the full dataset is ~2.8 GB)
+data/cic2018/*
+!data/cic2018/Thursday-01-03-2018_TrafficForML_CICFlowMeter.csv
+docs/

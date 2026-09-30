@@ -1,0 +1,9 @@
+[project]
+name = "netforecast"
+version = "0.1.0"
+description = "Network attack forecasting MVP (SIH 2026, problem 153)"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

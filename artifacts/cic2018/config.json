@@ -1,0 +1,209 @@
+{
+  "created_at": "2026-09-29T16:04:47+00:00",
+  "model_type": "world_model_v1",
+  "data_kind": "external",
+  "training_files": [
+    "data/cic2018/Friday-02-03-2018_TrafficForML_CICFlowMeter.csv",
+    "data/cic2018/Friday-16-02-2018_TrafficForML_CICFlowMeter.csv",
+    "data/cic2018/Friday-23-02-2018_TrafficForML_CICFlowMeter.csv",
+    "data/cic2018/Thursday-01-03-2018_TrafficForML_CICFlowMeter.csv",
+    "data/cic2018/Thursday-15-02-2018_TrafficForML_CICFlowMeter.csv",
+    "data/cic2018/Thursday-22-02-2018_TrafficForML_CICFlowMeter.csv",
+    "data/cic2018/Wednesday-14-02-2018_TrafficForML_CICFlowMeter.csv",
+    "data/cic2018/Wednesday-21-02-2018_TrafficForML_CICFlowMeter.csv",
+    "data/cic2018/Wednesday-28-02-2018_TrafficForML_CICFlowMeter.csv"
+  ],
+  "window_seconds": 60,
+  "seq_len": 10,
+  "k": 10,
+  "attack_fraction_threshold": 0.05,
+  "target": "for each of the next 10 windows (60s each): is it an attack window (>= 5% malicious flows)? Headline: P(any attack window within 10)",
+  "features": [
+    "log_n_flows",
+    "frac_tcp",
+    "frac_udp",
+    "frac_other_proto",
+    "dur_mean",
+    "dur_std",
+    "dur_max",
+    "fwd_pkts_mean",
+    "fwd_pkts_max",
+    "bwd_pkts_mean",
+    "bwd_pkts_max",
+    "frac_no_bwd",
+    "fwd_bytes_mean",
+    "fwd_bytes_max",
+    "bwd_bytes_mean",
+    "iat_mean",
+    "syn_rate",
+    "rst_rate",
+    "fin_rate",
+    "psh_rate",
+    "ack_rate",
+    "urg_rate",
+    "log_distinct_dst_ports",
+    "distinct_dst_port_ratio",
+    "frac_port_ftp",
+    "frac_port_ssh",
+    "frac_port_web",
+    "frac_port_rdp",
+    "frac_port_smb",
+    "frac_port_dns",
+    "frac_port_high",
+    "log_distinct_src_ips",
+    "log_distinct_dst_ips",
+    "log_distinct_pairs"
+  ],
+  "features_missing_in_training": [
+    "log_distinct_dst_ips",
+    "log_distinct_pairs",
+    "log_distinct_src_ips"
+  ],
+  "stages": [
+    "Reconnaissance",
+    "Initial Access",
+    "Lateral Movement",
+    "Command and Control",
+    "Exfiltration"
+  ],
+  "stages_seen_in_training": [
+    "Initial Access",
+    "Lateral Movement",
+    "Command and Control"
+  ],
+  "thresholds": {
+    "world_model": {
+      "any": 0.7963284254074097,
+      "steps": [
+        0.679810643196106,
+        0.6893587112426758,
+        0.714270830154419,
+        0.735032320022583,
+        0.7515318393707275,
+        0.764334499835968,
+        0.7845513820648193,
+        0.7904487252235413,
+        0.7926807403564453,
+        0.7909168601036072
+      ]
+    },
+    "logistic_regression": {
+      "any": 0.9599449038505554,
+      "steps": [
+        0.9656292796134949,
+        0.804909884929657,
+        0.8510120511054993,
+        0.6601154208183289,
+        0.5279504060745239,
+        0.5371115207672119,
+        0.6999948024749756,
+        0.689472496509552,
+        0.7032871246337891,
+        0.7420563101768494
+      ]
+    }
+  },
+  "threshold_source": "max F1 on validation split",
+  "split": {
+    "method": "by-capture+blocked-val",
+    "train": [
+      "Friday-02-03-2018_TrafficForML_CICFlowMeter:2018-03-02",
+      "Friday-16-02-2018_TrafficForML_CICFlowMeter:2018-02-16",
+      "Thursday-15-02-2018_TrafficForML_CICFlowMeter:2018-02-15",
+      "Thursday-22-02-2018_TrafficForML_CICFlowMeter:2018-02-22",
+      "Wednesday-14-02-2018_TrafficForML_CICFlowMeter:2018-02-14",
+      "Wednesday-21-02-2018_TrafficForML_CICFlowMeter:2018-02-21",
+      "Wednesday-28-02-2018_TrafficForML_CICFlowMeter:2018-02-28"
+    ],
+    "val": [
+      "Thursday-15-02-2018_TrafficForML_CICFlowMeter:2018-02-15#block0",
+      "Wednesday-14-02-2018_TrafficForML_CICFlowMeter:2018-02-14#block0",
+      "Wednesday-14-02-2018_TrafficForML_CICFlowMeter:2018-02-14#block1",
+      "Wednesday-21-02-2018_TrafficForML_CICFlowMeter:2018-02-21#block2",
+      "Wednesday-28-02-2018_TrafficForML_CICFlowMeter:2018-02-28#block0",
+      "Wednesday-28-02-2018_TrafficForML_CICFlowMeter:2018-02-28#block2",
+      "Wednesday-28-02-2018_TrafficForML_CICFlowMeter:2018-02-28#block4"
+    ],
+    "test": [
+      "Friday-23-02-2018_TrafficForML_CICFlowMeter:2018-02-23",
+      "Thursday-01-03-2018_TrafficForML_CICFlowMeter:2018-03-01"
+    ],
+    "test_hours": [
+      "Friday-16-02-2018_TrafficForML_CICFlowMeter:2018-02-16#block2",
+      "Thursday-22-02-2018_TrafficForML_CICFlowMeter:2018-02-22#block0",
+      "Thursday-22-02-2018_TrafficForML_CICFlowMeter:2018-02-22#block1",
+      "Wednesday-14-02-2018_TrafficForML_CICFlowMeter:2018-02-14#block2",
+      "Wednesday-21-02-2018_TrafficForML_CICFlowMeter:2018-02-21#block0"
+    ],
+    "note": "explicit capture lists; validation = 7 and test_hours = 5 blocks of 120 windows drawn (stratified by attack presence, seed=42) from the training captures; blocks never share a sequence; test captures are entire unseen days"
+  },
+  "world_model": {
+    "hidden": 64,
+    "layers": 1,
+    "dropout": 0.1,
+    "epochs": 40,
+    "batch_size": 64,
+    "lr": 0.001,
+    "state_loss_weight": 0.05,
+    "stage_loss_weight": 0.3,
+    "rollout_loss_weight": 1.0,
+    "patience": 6,
+    "seed": 42
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 2.650741305786776,
+      "val_loss": 2.673159599304199,
+      "val_state_nll": 0.30129531025886536
+    },
+    {
+      "epoch": 2,
+      "train_loss": 1.6551971530467622,
+      "val_loss": 1.8508999347686768,
+      "val_state_nll": 0.25816595554351807
+    },
+    {
+      "epoch": 3,
+      "train_loss": 1.1154205271455109,
+      "val_loss": 1.665380597114563,
+      "val_state_nll": 0.24786676466464996
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.842251927847047,
+      "val_loss": 1.800801396369934,
+      "val_state_nll": 0.19229485094547272
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.6845742192564301,
+      "val_loss": 2.1302456855773926,
+      "val_state_nll": 0.11860005557537079
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.6096945227727957,
+      "val_loss": 2.0693657398223877,
+      "val_state_nll": 0.06624888628721237
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.5494073576335327,
+      "val_loss": 1.8938590288162231,
+      "val_state_nll": 0.0134954322129488
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.49731835688025944,
+      "val_loss": 2.080923080444336,
+      "val_state_nll": -0.00904427282512188
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.453887152657855,
+      "val_loss": 1.8544824123382568,
+      "val_state_nll": -0.04591109976172447
+    }
+  ]
+}
