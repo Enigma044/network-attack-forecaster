@@ -182,7 +182,7 @@ in windows), `--epochs`, `--hidden`, `--seed`. Each trained model directory hold
 ## Deployment
 
 One container serves the API and the dashboard. It runs in public mode, which blocks retraining from the web and
-limits uploads to 200 MB. [DEPLOY.md](DEPLOY.md) covers three routes: a free public link on Hugging Face Spaces, a
+limits uploads to 1 GB (streamed to disk, so memory stays low). [DEPLOY.md](DEPLOY.md) covers three routes: a free public link on Hugging Face Spaces, a
 temporary tunnel from your laptop, and saving the image to a file.
 
 ## Supported input: CIC-IDS-2018 flow CSV

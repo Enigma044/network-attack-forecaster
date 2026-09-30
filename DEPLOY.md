@@ -9,7 +9,7 @@ held-out CIC-IDS-2018 day (Thursday 01-03-2018, 103 MB). It does not include the
 | Setting | Container default | Why |
 |---|---|---|
 | `NETFORECAST_PUBLIC=1` | on | turns off “Build the practice model” (`POST /api/demo/build` returns 403), so visitors can't make the server retrain |
-| `NETFORECAST_MAX_UPLOAD_MB=200` | 200 MB | refuses bigger uploads with HTTP 413; big captures belong on the command line |
+| `NETFORECAST_MAX_UPLOAD_MB=1024` | 1 GB | refuses bigger uploads with HTTP 413. Uploads are streamed to a temporary file on disk (deleted afterwards), not held in memory |
 | `PORT=7860` | 7860 | the port Hugging Face Spaces expects |
 | user | uid 1000, non-root | required by Hugging Face; safer anywhere |
 | `GET /api/health` | health check | used by the image's `HEALTHCHECK` |

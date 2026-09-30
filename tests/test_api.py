@@ -74,3 +74,13 @@ def test_public_mode_blocks_training(client, monkeypatch):
     monkeypatch.setattr(api_mod, "PUBLIC", True)
     assert client.post("/api/demo/build").status_code == 403
     assert client.get("/api/info").json()["public"] is True
+
+
+def test_uploads_are_streamed_to_disk_and_cleaned_up(client, synthetic_dir, tmp_path, monkeypatch):
+    import tempfile
+    monkeypatch.setattr(tempfile, "tempdir", str(tmp_path))
+    path = sorted(synthetic_dir.glob("*.csv"))[0]
+    with open(path, "rb") as fh:
+        res = client.post("/api/analyze", data={"model": "test-model"}, files={"file": (path.name, fh, "text/csv")})
+    assert res.status_code == 200 and res.json()["report"]["ok"]
+    assert not list(tmp_path.glob("netforecast-*.csv"))  # temp copy removed after analysis

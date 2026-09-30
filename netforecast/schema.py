@@ -13,6 +13,7 @@ from typing import IO
 
 import numpy as np
 import pandas as pd
+from pandas.api.types import union_categoricals
 
 # canonical name -> accepted header spellings
 COLUMN_ALIASES: dict[str, list[str]] = {
@@ -47,6 +48,7 @@ _CTU13_MARKERS = {"starttime", "srcaddr", "dstaddr", "totbytes"}
 TIMESTAMP_FORMATS = ["%d/%m/%Y %H:%M:%S", "%d/%m/%Y %I:%M:%S %p", "%Y-%m-%d %H:%M:%S"]
 
 MAX_BAD_ROW_FRACTION = 0.5
+CHUNK_ROWS = 500_000  # rows parsed at a time; keeps peak memory low for ~1 GB files
 
 
 @dataclass
@@ -108,7 +110,7 @@ def parse_timestamps(values: pd.Series) -> pd.Series:
     return fallback if fallback.notna().sum() > best.notna().sum() else best
 
 
-def _fix_cic2018_clock(df: pd.DataFrame, raw: pd.Series, report: ValidationReport) -> None:
+def _fix_cic2018_clock(df: pd.DataFrame, has_ampm: bool, report: ValidationReport) -> None:
     """Repair two known CIC-IDS-2018 timestamp quirks in place.
 
     * A handful of rows carry epoch-era dates (1970); they are dropped (set to NaT).
@@ -126,7 +128,7 @@ def _fix_cic2018_clock(df: pd.DataFrame, raw: pd.Series, report: ValidationRepor
         ts = df["Timestamp"]
     hours = ts.dt.hour
     valid = ts.notna()
-    if not valid.any() or raw.str.contains(r"\b(?:AM|PM)\b", case=False, regex=True).any():
+    if not valid.any() or has_ampm:
         return
     if hours[valid].max() <= 12 and (hours[valid] < 8).any() and (hours[valid] >= 8).any():
         pm = valid & (hours < 8)
@@ -179,42 +181,61 @@ def load_flows(source: str | Path | IO, name: str | None = None) -> tuple[pd.Dat
             "Optional column(s) not present; related features will be zero: " + ", ".join(report.optional_missing)
         )
 
+    # Parse in chunks: each chunk is cleaned and converted to compact dtypes straight away, so
+    # a stray repeated header line never forces whole columns into Python strings.
+    parts: list[pd.DataFrame] = []
+    label_parts: list[pd.Categorical] = []
+    n_repeated = 0
+    has_ampm = False
     try:
         _rewind(source)
-        df = pd.read_csv(source, usecols=list(resolved), low_memory=False)
+        for chunk in pd.read_csv(source, usecols=list(resolved), low_memory=False, chunksize=CHUNK_ROWS):
+            chunk = chunk.rename(columns=resolved)
+            report.n_rows_read += len(chunk)
+            # CIC-IDS-2018 files contain repeated header lines in the middle of the data.
+            repeated = chunk["Timestamp"].astype("string").str.strip().str.lower() == "timestamp"
+            if repeated.any():
+                n_repeated += int(repeated.sum())
+                chunk = chunk.loc[~repeated]
+            raw_ts = chunk["Timestamp"].astype("string")
+            has_ampm = has_ampm or bool(raw_ts.str.contains(r"\b(?:AM|PM)\b", case=False, regex=True).any())
+            chunk["Timestamp"] = parse_timestamps(raw_ts)
+            for col in NUMERIC_COLUMNS:
+                if col in chunk.columns:
+                    chunk[col] = (pd.to_numeric(chunk[col], errors="coerce")
+                                  .replace([np.inf, -np.inf], np.nan).astype("float32"))
+            if "Label" in chunk.columns:
+                label = chunk.pop("Label").astype("string").str.strip()
+                label_parts.append(pd.Categorical(label.mask(label == "")))
+            parts.append(chunk)
     except (pd.errors.ParserError, ValueError, OSError) as exc:
         report.errors.append(f"Could not parse the CSV body: {exc}")
         return None, report
-    df = df.rename(columns=resolved)
-    report.n_rows_read = len(df)
-    if df.empty:
+    if not parts or report.n_rows_read == 0:
         report.errors.append("The file has a header but no data rows.")
         return None, report
+    df = pd.concat(parts, ignore_index=True)
+    del parts
+    if label_parts:
+        df["Label"] = union_categoricals(label_parts)
+        del label_parts
+    if n_repeated:
+        report.warnings.append(f"Dropped {n_repeated} repeated header row(s).")
 
-    # CIC-IDS-2018 files contain repeated header lines in the middle of the data.
-    repeated = df["Timestamp"].astype("string").str.strip().str.lower() == "timestamp"
-    if repeated.any():
-        report.warnings.append(f"Dropped {int(repeated.sum())} repeated header row(s).")
-        df = df.loc[~repeated]
-
-    raw_ts = df["Timestamp"].astype("string")
-    df["Timestamp"] = parse_timestamps(raw_ts)
-    _fix_cic2018_clock(df, raw_ts, report)
-    for col in NUMERIC_COLUMNS:
-        if col in df.columns:
-            df[col] = pd.to_numeric(df[col], errors="coerce").replace([np.inf, -np.inf], np.nan)
+    _fix_cic2018_clock(df, has_ampm, report)
 
     bad_ts = df["Timestamp"].isna()
     bad_required = df[REQUIRED_COLUMNS[1:]].isna().any(axis=1)
     bad = bad_ts | bad_required
-    n_bad = int(bad.sum()) + int(repeated.sum())
+    n_bad = int(bad.sum()) + n_repeated
     if bad_ts.any():
         report.warnings.append(f"{int(bad_ts.sum())} row(s) have an unparseable Timestamp and were dropped.")
     if (bad_required & ~bad_ts).any():
         report.warnings.append(
             f"{int((bad_required & ~bad_ts).sum())} row(s) have non-numeric required values and were dropped."
         )
-    df = df.loc[~bad].copy()
+    if bad.any():
+        df = df.loc[~bad]
     if df.empty or n_bad / max(report.n_rows_read, 1) > MAX_BAD_ROW_FRACTION:
         report.errors.append(
             f"{n_bad} of {report.n_rows_read} rows are malformed (more than {MAX_BAD_ROW_FRACTION:.0%}). "
@@ -228,23 +249,25 @@ def load_flows(source: str | Path | IO, name: str | None = None) -> tuple[pd.Dat
         df.loc[negative, "Flow Duration"] = 0
 
     if "Label" in df.columns:
-        labels = df["Label"].astype("string").str.strip()
-        labels = labels.mask(labels == "")
-        df["Label"] = labels
+        labels = df["Label"]
         report.has_labels = bool(labels.notna().any())
         if report.has_labels and labels.isna().any():
             report.warnings.append(f"{int(labels.isna().sum())} row(s) have no Label; treated as unlabeled.")
-        attack = (labels.str.lower() != "benign").fillna(False).astype(float)
-        df["is_attack"] = np.where(labels.isna(), np.nan, attack)
-        report.label_counts = {str(k): int(v) for k, v in labels.value_counts().items()}
+        benign = np.asarray(labels.cat.categories.astype(str).str.lower() == "benign")
+        codes = labels.cat.codes.to_numpy()
+        attack = np.where(codes >= 0, ~benign[np.clip(codes, 0, None)], False).astype("float32")
+        df["is_attack"] = np.where(codes < 0, np.nan, attack).astype("float32")
+        report.label_counts = {str(k): int(v) for k, v in labels.value_counts().items() if v > 0}
     else:
-        df["is_attack"] = np.nan
+        df["is_attack"] = np.float32(np.nan)
         report.warnings.append("No Label column: forecasts can be produced, but not evaluated.")
 
     if "Synthetic" in df.columns and (df["Synthetic"] == 1).any():
         report.data_kind = "synthetic"
 
-    df = df.sort_values("Timestamp", kind="stable").reset_index(drop=True)
+    if not df["Timestamp"].is_monotonic_increasing:
+        df = df.sort_values("Timestamp", kind="stable")
+    df = df.reset_index(drop=True)
     report.n_rows_valid = len(df)
     report.time_start = df["Timestamp"].iloc[0]
     report.time_end = df["Timestamp"].iloc[-1]

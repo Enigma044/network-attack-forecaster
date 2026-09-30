@@ -476,7 +476,8 @@ def flow_evidence(analysis: Analysis, row: int, window_seconds: int, recent: int
     stats["rate_before"] = (stats["flows"] - stats["recent"]) / older_windows
     stats["growth"] = stats["rate_recent"] - stats["rate_before"]
     if "Label" in f:
-        stats["labels"] = groups["Label"].agg(lambda s: ", ".join(f"{k} ({v})" for k, v in s.value_counts().head(2).items()))
+        stats["labels"] = groups["Label"].agg(
+            lambda s: ", ".join(f"{k} ({v})" for k, v in s.value_counts().head(2).items() if v > 0))
     stats = stats.sort_values(["growth", "flows"], ascending=False).head(top).reset_index()
     stats["Dst Port"] = stats["Dst Port"].astype(int)
     stats["Protocol"] = stats["Protocol"].astype(int).map({6: "TCP", 17: "UDP", 0: "HOPOPT"}).fillna(stats["Protocol"].astype(str))

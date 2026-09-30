@@ -7,14 +7,14 @@ Binds to localhost by default; nothing leaves the machine.
 
 Environment:
     NETFORECAST_PUBLIC=1        public deployment: disables retraining from the web UI
-    NETFORECAST_MAX_UPLOAD_MB   largest accepted upload (default 300)
+    NETFORECAST_MAX_UPLOAD_MB   largest accepted upload (default 1024, i.e. 1 GB)
 """
 
 from __future__ import annotations
 
-import io
 import json
 import os
+import tempfile
 import threading
 import uuid
 from collections import OrderedDict
@@ -40,7 +40,7 @@ DEMO_MODEL = "synthetic-demo"
 DIST = ROOT / "frontend" / "dist"
 MAX_CACHED_ANALYSES = 3
 PUBLIC = os.environ.get("NETFORECAST_PUBLIC", "").lower() in ("1", "true", "yes")
-MAX_UPLOAD_MB = float(os.environ.get("NETFORECAST_MAX_UPLOAD_MB", "300"))
+MAX_UPLOAD_MB = float(os.environ.get("NETFORECAST_MAX_UPLOAD_MB", "1024"))
 
 app = FastAPI(title="Network Attack Forecaster API", docs_url="/api/docs", openapi_url="/api/openapi.json")
 
@@ -129,15 +129,27 @@ def _sample_path(sample_id: str) -> Path:
 # ---------------------------------------------------------------------------
 
 
-def _read_upload(file: UploadFile) -> bytes:
-    """Read an upload in chunks, refusing it once it passes the size limit."""
+def _save_upload(file: UploadFile) -> Path:
+    """Stream an upload to a temporary file on disk, refusing it once it passes the size limit.
+
+    Keeping the upload on disk means a 1 GB CSV never sits in memory as raw bytes; pandas
+    then reads only the columns it needs straight from the file.
+    """
     limit = int(MAX_UPLOAD_MB * 1e6)
-    buf = io.BytesIO()
-    while chunk := file.file.read(1 << 20):
-        buf.write(chunk)
-        if buf.tell() > limit:
-            raise HTTPException(413, f"File is larger than {MAX_UPLOAD_MB:.0f} MB. Use the command line for big captures.")
-    return buf.getvalue()
+    tmp = tempfile.NamedTemporaryFile(prefix="netforecast-", suffix=".csv", delete=False)
+    written = 0
+    try:
+        with tmp:
+            while chunk := file.file.read(8 << 20):
+                written += len(chunk)
+                if written > limit:
+                    raise HTTPException(
+                        413, f"File is larger than {MAX_UPLOAD_MB:.0f} MB. Use the command line for bigger captures.")
+                tmp.write(chunk)
+    except BaseException:
+        Path(tmp.name).unlink(missing_ok=True)
+        raise
+    return Path(tmp.name)
 
 
 @app.get("/api/health")
@@ -215,25 +227,31 @@ def analyze_endpoint(
     sample: str | None = Form(None),
 ):
     bundle = _bundle(model)
+    upload_path: Path | None = None
     if file is not None:
-        name, source = file.filename or "upload.csv", io.BytesIO(_read_upload(file))
+        upload_path = _save_upload(file)
+        name, source = file.filename or "upload.csv", upload_path
     elif sample:
         path = _sample_path(sample)
         name, source = path.name, path
     else:
         raise HTTPException(400, "Send a CSV file or choose a sample.")
 
-    flows, report = load_flows(source, name=name)
-    rep = _report_dict(report)
-    if not report.ok:
-        return JSONResponse({"report": rep}, status_code=422)
     try:
-        result = analyze(flows, name, bundle)
-    except ValueError as exc:
-        rep["errors"].append(str(exc))
-        rep["ok"] = False
-        return JSONResponse({"report": rep}, status_code=422)
-    del flows
+        flows, report = load_flows(source, name=name)
+        rep = _report_dict(report)
+        if not report.ok:
+            return JSONResponse({"report": rep}, status_code=422)
+        try:
+            result = analyze(flows, name, bundle)
+        except ValueError as exc:
+            rep["errors"].append(str(exc))
+            rep["ok"] = False
+            return JSONResponse({"report": rep}, status_code=422)
+        del flows
+    finally:
+        if upload_path is not None:
+            upload_path.unlink(missing_ok=True)
 
     analysis_id = uuid.uuid4().hex[:12]
     with _lock:

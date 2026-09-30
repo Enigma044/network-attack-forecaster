@@ -121,7 +121,7 @@ export default function SourcePicker({ samples, models, source, onSource, model,
               Choose CSV
             </button>
             <span className="truncate text-ink-2">
-              {source?.kind === 'upload' ? `${source.file.name} · ${(source.file.size / 1e6).toFixed(1)} MB` : `or drop a CIC-IDS-2018 flow CSV${maxUploadMb ? ` (up to ${Math.round(maxUploadMb)} MB)` : ''}`}
+              {source?.kind === 'upload' ? `${source.file.name} · ${(source.file.size / 1e6).toFixed(1)} MB` : `or drop a CIC-IDS-2018 flow CSV${maxUploadMb ? ` (up to ${maxUploadMb >= 1000 ? `${+(maxUploadMb / 1024).toFixed(1)} GB` : `${Math.round(maxUploadMb)} MB`})` : ''}`}
             </span>
             <input
               ref={inputRef}

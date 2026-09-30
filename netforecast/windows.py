@@ -81,8 +81,9 @@ MAX_WINDOWS_PER_CAPTURE = 200_000
 def add_capture_id(df: pd.DataFrame, source_name: str) -> pd.DataFrame:
     """Tag each flow with '<file stem>:<date>' so a multi-day file splits into daily captures."""
     stem = str(source_name).replace("\\", "/").rsplit("/", 1)[-1].rsplit(".", 1)[0]
-    df = df.copy()
-    df["capture_id"] = stem + ":" + df["Timestamp"].dt.strftime("%Y-%m-%d")
+    # A categorical holds one string per day instead of one per row (millions for a big file).
+    codes, days = pd.factorize(df["Timestamp"].dt.normalize())
+    df["capture_id"] = pd.Categorical.from_codes(codes, categories=[f"{stem}:{d:%Y-%m-%d}" for d in days])
     return df
 
 
@@ -92,14 +93,14 @@ def missing_features(flows: pd.DataFrame) -> list[str]:
 
 def _log1p_col(flows: pd.DataFrame, col: str) -> pd.Series:
     if col not in flows.columns:
-        return pd.Series(0.0, index=flows.index)
-    return np.log1p(flows[col].clip(lower=0).fillna(0).astype("float64"))
+        return pd.Series(np.float32(0), index=flows.index)
+    return np.log1p(flows[col].clip(lower=0).fillna(0).astype("float32"))
 
 
 def _col(flows: pd.DataFrame, col: str) -> pd.Series:
     if col not in flows.columns:
-        return pd.Series(0.0, index=flows.index)
-    return flows[col].clip(lower=0).fillna(0).astype("float64")
+        return pd.Series(np.float32(0), index=flows.index)
+    return flows[col].clip(lower=0).fillna(0).astype("float32")
 
 
 def build_windows(
@@ -120,18 +121,18 @@ def build_windows(
     if "capture_id" not in flows.columns:
         raise ValueError("flows must have a capture_id column (use add_capture_id)")
     freq = f"{int(window_seconds)}s"
-    proto = flows["Protocol"].astype("float64")
-    port = flows["Dst Port"].astype("float64")
+    proto = flows["Protocol"].astype("float32")
+    port = flows["Dst Port"].astype("float32")
     d = pd.DataFrame(
         {
-            "capture_id": flows["capture_id"].to_numpy(),
+            "capture_id": flows["capture_id"].array,  # stays categorical (compact)
             "window_start": flows["Timestamp"].dt.floor(freq).to_numpy(),
-            "tcp": (proto == 6).astype(float),
-            "udp": (proto == 17).astype(float),
+            "tcp": (proto == 6).astype("float32"),
+            "udp": (proto == 17).astype("float32"),
             "dur": _log1p_col(flows, "Flow Duration"),
             "fwd_pkts": _log1p_col(flows, "Tot Fwd Pkts"),
             "bwd_pkts": _log1p_col(flows, "Tot Bwd Pkts"),
-            "no_bwd": (flows["Tot Bwd Pkts"].fillna(0) <= 0).astype(float),
+            "no_bwd": (flows["Tot Bwd Pkts"].fillna(0) <= 0).astype("float32"),
             "fwd_bytes": _log1p_col(flows, "TotLen Fwd Pkts"),
             "bwd_bytes": _log1p_col(flows, "TotLen Bwd Pkts"),
             "iat": _log1p_col(flows, "Flow IAT Mean"),
@@ -142,17 +143,17 @@ def build_windows(
             "ack": _col(flows, "ACK Flag Cnt"),
             "urg": _col(flows, "URG Flag Cnt"),
             "dst_port": port,
-            "port_high": (port >= 1024).astype(float),
-            "is_attack": flows["is_attack"].astype("float64"),
+            "port_high": (port >= 1024).astype("float32"),
+            "is_attack": flows["is_attack"].astype("float32"),
         },
         index=flows.index,
     )
     for group, ports in PORT_GROUPS.items():
-        d[f"port_{group}"] = port.isin(ports).astype(float)
-    d["other_proto"] = 1.0 - d["tcp"] - d["udp"]
+        d[f"port_{group}"] = port.isin(ports).astype("float32")
+    d["other_proto"] = np.float32(1.0) - d["tcp"] - d["udp"]
 
     keys = ["capture_id", "window_start"]
-    g = d.groupby(keys, sort=True)
+    g = d.groupby(keys, sort=True, observed=True)
     w = g.agg(
         n_flows=("dur", "size"),
         frac_tcp=("tcp", "mean"),
@@ -189,10 +190,10 @@ def build_windows(
             {"capture_id": d["capture_id"], "window_start": d["window_start"],
              "src": flows["Src IP"].astype("string"), "dst": flows["Dst IP"].astype("string")}
         )
-        gi = ips.groupby(keys, sort=True)
+        gi = ips.groupby(keys, sort=True, observed=True)
         w["n_distinct_src_ips"] = gi["src"].nunique()
         w["n_distinct_dst_ips"] = gi["dst"].nunique()
-        w["n_distinct_pairs"] = ips.groupby(keys + ["src", "dst"], sort=False).size().groupby(level=[0, 1]).size()
+        w["n_distinct_pairs"] = ips.groupby(keys + ["src", "dst"], sort=False, observed=True).size().groupby(level=[0, 1]).size()
     else:
         w["n_distinct_src_ips"] = 0
         w["n_distinct_dst_ips"] = 0
@@ -210,11 +211,11 @@ def build_windows(
                 {"capture_id": d.loc[attack_rows, "capture_id"], "window_start": d.loc[attack_rows, "window_start"],
                  "label": labels, "stage": labels.map(stage_of)}
             )
-            top = lab.groupby(keys)["label"].agg(lambda s: s.value_counts().index[0])
+            top = lab.groupby(keys, observed=True)["label"].agg(lambda s: s.value_counts().index[0])
             w.loc[top.index, "top_label"] = top
             staged = lab.dropna(subset=["stage"])
             if not staged.empty:
-                st = staged.groupby(keys)["stage"].agg(lambda s: s.value_counts().index[0])
+                st = staged.groupby(keys, observed=True)["stage"].agg(lambda s: s.value_counts().index[0])
                 w.loc[st.index, "stage"] = st
 
     w = _fill_gaps(w, freq)
@@ -237,6 +238,7 @@ def build_windows(
     w.loc[w["is_attack"] != 1, "stage"] = None
 
     w = w.reset_index()
+    w["capture_id"] = w["capture_id"].astype(str)  # one row per minute now, so plain strings are cheap
     w[FEATURES] = w[FEATURES].astype("float32")
     return w
 
@@ -244,7 +246,7 @@ def build_windows(
 def _fill_gaps(w: pd.DataFrame, freq: str) -> pd.DataFrame:
     """Reindex each capture onto a complete window grid, zero-filling empty windows."""
     parts = []
-    for cap, grp in w.groupby(level=0, sort=True):
+    for cap, grp in w.groupby(level=0, sort=True, observed=True):
         starts = grp.index.get_level_values(1)
         grid = pd.date_range(starts.min(), starts.max(), freq=freq)
         if len(grid) > MAX_WINDOWS_PER_CAPTURE:
